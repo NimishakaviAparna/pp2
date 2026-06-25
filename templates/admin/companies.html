@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Companies - Admin{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-4"><i class="bi bi-building"></i> Manage Companies</h1>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="search" placeholder="Search by name or email..." 
+                       value="{{ search }}">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="status">
+                    <option value="all">All Statuses</option>
+                    <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if status == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Companies Table -->
+<div class="card">
+    <div class="card-body">
+        {% if companies %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Email</th>
+                            <th>Industry</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for company in companies %}
+                            <tr>
+                                <td><strong>{{ company.company_name }}</strong></td>
+                                <td>{{ company.user.email }}</td>
+                                <td>{{ company.industry }}</td>
+                                <td>{{ company.location }}</td>
+                                <td>
+                                    {% if company.approval_status == 'approved' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif company.approval_status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Rejected</span>
+                                    {% endif %}
+                                    {% if company.is_blacklisted %}
+                                        <span class="badge bg-dark">Blacklisted</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if company.approval_status == 'pending' %}
+                                        <form method="POST" style="display: inline;">
+                                            <button formaction="{{ url_for('admin.approve_company', company_id=company.id) }}" 
+                                                    class="btn btn-sm btn-success" title="Approve">
+                                                <i class="bi bi-check-circle"></i>
+                                            </button>
+                                            <button formaction="{{ url_for('admin.reject_company', company_id=company.id) }}" 
+                                                    class="btn btn-sm btn-danger" title="Reject">
+                                                <i class="bi bi-x-circle"></i>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                    <form method="POST" style="display: inline;">
+                                        <button formaction="{{ url_for('admin.blacklist_company', company_id=company.id) }}" 
+                                                class="btn btn-sm {{ 'btn-warning' if not company.is_blacklisted else 'btn-info' }}" 
+                                                title="{{ 'Blacklist' if not company.is_blacklisted else 'Unblacklist' }}">
+                                            <i class="bi {{ 'bi-ban' if not company.is_blacklisted else 'bi-arrow-counterclockwise' }}"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if pagination %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if pagination.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.manage_companies', page=pagination.prev_num, search=search, status=status) }}">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page_num in pagination.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num == pagination.page %}
+                                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="{{ url_for('admin.manage_companies', page=page_num, search=search, status=status) }}">{{ page_num }}</a></li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if pagination.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.manage_companies', page=pagination.next_num, search=search, status=status) }}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle"></i> No companies found.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

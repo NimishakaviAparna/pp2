@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Create Placement Drive - Company{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-4"><i class="bi bi-plus-circle"></i> Create Placement Drive</h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <form method="POST" id="createDriveForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="job_title" class="form-label">Job Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="job_title" name="job_title" required 
+                                   placeholder="e.g., Software Engineer">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="job_type" class="form-label">Job Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="job_type" name="job_type" required>
+                                <option value="">Select Type</option>
+                                <option value="Full Time">Full Time</option>
+                                <option value="Part Time">Part Time</option>
+                                <option value="Internship">Internship</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="job_description" class="form-label">Job Description <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="job_description" name="job_description" rows="4" required 
+                                  placeholder="Describe the role and responsibilities..."></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="location" name="location" required 
+                                   placeholder="e.g., Bangalore, India">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="application_deadline" class="form-label">Application Deadline <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" id="application_deadline" name="application_deadline" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="salary_min" class="form-label">Min Salary (LPA) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="salary_min" name="salary_min" required 
+                                   step="0.5" placeholder="e.g., 6.0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="salary_max" class="form-label">Max Salary (LPA) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="salary_max" name="salary_max" required 
+                                   step="0.5" placeholder="e.g., 12.0">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="min_cgpa" class="form-label">Minimum CGPA</label>
+                            <input type="number" class="form-control" id="min_cgpa" name="min_cgpa" 
+                                   step="0.1" min="0" max="10" placeholder="e.g., 7.0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="eligible_branches" class="form-label">Eligible Branches</label>
+                            <input type="text" class="form-control" id="eligible_branches" name="eligible_branches" 
+                                   placeholder="e.g., CS,IT,ENTC (comma-separated)">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="eligible_years" class="form-label">Eligible Years</label>
+                        <input type="text" class="form-control" id="eligible_years" name="eligible_years" 
+                               placeholder="e.g., 3rd,Final (comma-separated)">
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('company.company_drives') }}" class="btn btn-secondary">
+                            <i class="bi bi-x"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Create Drive
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

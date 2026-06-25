@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Company Dashboard - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-4"><i class="bi bi-speedometer2"></i> Company Dashboard</h1>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="dashboard-stat">
+            <div class="dashboard-stat-value">{{ stats.total_drives }}</div>
+            <div class="dashboard-stat-label"><i class="bi bi-briefcase"></i> Total Drives</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="dashboard-stat">
+            <div class="dashboard-stat-value">{{ stats.active_drives }}</div>
+            <div class="dashboard-stat-label"><i class="bi bi-play-circle"></i> Active Drives</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="dashboard-stat">
+            <div class="dashboard-stat-value">{{ stats.total_applications }}</div>
+            <div class="dashboard-stat-label"><i class="bi bi-file-text"></i> Applications</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="dashboard-stat">
+            <div class="dashboard-stat-value">{{ stats.total_selected }}</div>
+            <div class="dashboard-stat-label"><i class="bi bi-check-circle"></i> Selected</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Company Info Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-building"></i> Company Info</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-2"><strong>{{ company.company_name }}</strong></p>
+                <p class="mb-2"><small class="text-muted">{{ company.user.email }}</small></p>
+                <p class="mb-2"><strong>Industry:</strong> {{ company.industry }}</p>
+                <p class="mb-2"><strong>Location:</strong> {{ company.location }}</p>
+                <p class="mb-3"><strong>Status:</strong> 
+                    {% if company.approval_status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                    {% elif company.approval_status == 'pending' %}
+                        <span class="badge bg-warning">Pending</span>
+                    {% else %}
+                        <span class="badge bg-danger">Rejected</span>
+                    {% endif %}
+                </p>
+                <a href="{{ url_for('company.company_profile') }}" class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-pencil"></i> Edit Profile
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Drives -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-briefcase"></i> Recent Drives</h5>
+            </div>
+            <div class="card-body">
+                {% if drives %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Applicants</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for drive in drives %}
+                                    <tr>
+                                        <td><strong>{{ drive.job_title }}</strong></td>
+                                        <td>{{ drive.applications|length }}</td>
+                                        <td>
+                                            {% if drive.status == 'approved' %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% elif drive.status == 'pending' %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% elif drive.status == 'closed' %}
+                                                <span class="badge bg-secondary">Closed</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('company.view_applications', drive_id=drive.id) }}" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">No drives yet. <a href="{{ url_for('company.create_drive') }}">Create one</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                {% if company.approval_status == 'approved' %}
+                    <a href="{{ url_for('company.create_drive') }}" class="btn btn-outline-primary me-2">
+                        <i class="bi bi-plus-circle"></i> Create New Drive
+                    </a>
+                {% else %}
+                    <div class="alert alert-warning mb-0">
+                        <i class="bi bi-exclamation-circle"></i> Your company is not approved yet. Please wait for admin approval to create drives.
+                    </div>
+                {% endif %}
+                <a href="{{ url_for('company.company_drives') }}" class="btn btn-outline-primary me-2">
+                    <i class="bi bi-briefcase"></i> View All Drives
+                </a>
+                <a href="{{ url_for('company.company_profile') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-person"></i> Company Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

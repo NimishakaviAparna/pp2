@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Placement Portal{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            color: #2c3e50;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .dashboard-stat {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+        
+        .dashboard-stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            margin-top: 40px;
+            padding: 30px 0;
+        }
+        
+        .main-content {
+            min-height: calc(100vh - 56px - 200px);
+            padding: 30px 0;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-briefcase"></i> Placement Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if is_authenticated %}
+                        {% if current_user_role == 'admin' %}
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.manage_companies') }}"><i class="bi bi-building"></i> Companies</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.manage_students') }}"><i class="bi bi-people"></i> Students</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.manage_drives') }}"><i class="bi bi-briefcase"></i> Drives</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.view_reports') }}"><i class="bi bi-graph-up"></i> Reports</a></li>
+                        {% elif current_user_role == 'student' %}
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('student.student_dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('student.student_drives') }}"><i class="bi bi-briefcase"></i> Drives</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('student.student_applications') }}"><i class="bi bi-file-text"></i> Applications</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('student.student_history') }}"><i class="bi bi-clock-history"></i> History</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('student.student_profile') }}"><i class="bi bi-person"></i> Profile</a></li>
+                        {% elif current_user_role == 'company' %}
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('company.company_dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('company.company_drives') }}"><i class="bi bi-briefcase"></i> Drives</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('company.create_drive') }}"><i class="bi bi-plus-circle"></i> Create Drive</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('company.company_profile') }}"><i class="bi bi-person"></i> Profile</a></li>
+                        {% endif %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> {{ current_user_name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}"><i class="bi bi-person-plus"></i> Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-circle"></i> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-briefcase"></i> Placement Portal</h5>
+                    <p>A comprehensive placement management system for institutes.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2024 Placement Portal. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
